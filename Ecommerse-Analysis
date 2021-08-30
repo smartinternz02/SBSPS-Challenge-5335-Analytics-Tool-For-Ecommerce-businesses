@@ -172,6 +172,7 @@ plt.title("Overall Profit Observations", fontsize=36)
 plt.show()
 
 
+#Yearly sales in the various states
 import folium
 import gmaps 
 from folium import plugins
