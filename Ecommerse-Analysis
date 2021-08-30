@@ -190,6 +190,29 @@ plt.legend(fontsize=20)
 plt.title("Overall Profit Observations", fontsize=36)
 plt.show()
 
+#Product type that was ordered greater times
+import random 
+def product_type_has_greaterorders(x):
+    d = []
+    d.append(x['Quantity'].sum())
+    d.append(x['Sales'].sum())
+    d.append(*x['Sub-Category'].unique())
+    return pd.Series(d,index=['Ordered','Sales','Product_type'])
+prdGO = dels.groupby("Sub-Category").apply(product_type_has_greaterorders)
+plt.figure(figsize=(20,16), dpi= 80)
+n = prdGO['Product_type'].unique().__len__()+1
+all_colors = list(plt.cm.colors.cnames.keys())
+random.seed(100)
+c = random.choices(all_colors, k=n)
+plt.bar(prdGO['Product_type'], prdGO['Ordered'], color=c, width=.5)
+for i, val in enumerate(prdGO['Ordered'].values):
+    plt.text(i, val, float(val), horizontalalignment='center', verticalalignment='bottom', fontdict={'fontweight':500, 'size':12})
+
+plt.gca().set_xticklabels(prdGO['Product_type'], rotation=60, horizontalalignment= 'right')
+plt.title("Product type that was ordered greater times", fontsize=22)
+plt.ylabel('# Orders')
+plt.show()
+
 
 #Yearly sales in the various states
 import folium
