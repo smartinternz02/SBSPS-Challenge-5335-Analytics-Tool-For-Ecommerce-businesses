@@ -170,3 +170,61 @@ plt.yticks(fontsize=14)
 plt.legend(fontsize=20)
 plt.title("Overall Profit Observations", fontsize=36)
 plt.show()
+
+
+import folium
+import gmaps 
+from folium import plugins
+from IPython.display import HTML, display
+from geopy.exc import GeocoderTimedOut
+from geopy.geocoders import Nominatim
+def findGeocode(city):
+    try:
+        geolocator = Nominatim(user_agent="your_app_name")
+        return geolocator.geocode(city,timeout=None)
+    except GeocoderTimedOut:
+        return findGeocode(city) 
+d = {}
+for i in dels.State.value_counts().index:
+    if findGeocode(i) != None:
+            loc = findGeocode(i)
+            d[i] = {'latitude':loc.latitude,'longitude':loc.longitude}
+    else:
+            d[i] = {'latitude':np.nan,'longitude':np.nan}
+
+def regiongrouping(data):
+    d = []
+    d.append(data['Quantity'].sum())
+    d.append(data['Sales'].sum())
+    d.append(data['Profit'].sum())
+    return pd.Series(d,index=['Orders','Sales','Profit'])
+
+dels['Date'] = pd.to_datetime(dels['Order Date'])
+dels['year'], dels['month'] = dels['Date'].dt.year, dels['Date'].dt.month
+dels = dels.sort_values(['Profit'], ascending=False)
+yr = sorted(list(dels['year'].unique()))
+yearset = {}
+for i in yr:
+    longitude = []
+    latitude = []
+    yrs = dels[dels['year'] == i]
+    regions = yrs.groupby(['State']).apply(regiongrouping)
+    for j in (regions.index):
+        if j in d.keys():
+            longitude.append(d[j]['longitude'])
+            latitude.append(d[j]['latitude'])
+    regions['latitude'] = latitude
+    regions['longitude'] = longitude
+    tooltip = "Click Here For More Info"
+    mlat = regions['latitude'].mean()
+    mlong = regions['longitude'].mean()
+    m = folium.Map(location=[mlat, mlong], zoom_start=5)
+    heats = regions.Sales
+    fig, ax = plt.subplots(1, figsize=(20, 9))
+    for r,o,s,p,la,lo in zip(regions.index,regions['Orders'],regions['Sales'],regions['Profit'],regions['latitude'],regions['longitude']):
+        c = "green" if p > 0 else "red"
+        market = "Profit" if p > 0 else "Loss"
+        ic ="thumbs-up" if p > 0 else "thumbs-down"
+        myMap = folium.Marker(location=[la, lo],icon=folium.Icon(icon=ic,color=c), popup="<stong>{}</stong><p>Sales:{}</p><p>Orders:{}</p><p>{}:{}</p>".format(r,s,int(o),market,p),tooltip=tooltip)
+        myMap.add_to(m)
+    yearset[i] = m
