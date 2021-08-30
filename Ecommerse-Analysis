@@ -1,5 +1,5 @@
 #Installation
-pip install pandas numpy matplotlib folium -U scikit-learn seaborn
+pip install pandas numpy geopy matplotlib folium -U scikit-learn seaborn
  
 #Importing
 import seaborn as sns
