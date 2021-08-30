@@ -1,6 +1,6 @@
 # SBSPS-Challenge-5335-Analytics-Tool-For-Ecommerce-businesses
 
-Coding outputs are attached in the Outputs.pdf in folder check it out
+Coding outputs are attached in the ecommerce-project-outputs.pdf in folder check it out
 
 One Geograpical output was provided in the HTML page that we provide in the folder download that HTML page and see the output.
 
