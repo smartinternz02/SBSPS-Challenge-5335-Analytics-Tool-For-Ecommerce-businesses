@@ -220,6 +220,14 @@ for i in yr:
     mlat = regions['latitude'].mean()
     mlong = regions['longitude'].mean()
     m = folium.Map(location=[mlat, mlong], zoom_start=5)
+    folium.map.Marker(
+    [mlat, mlong],
+    icon=folium.DivIcon(
+        icon_size=(250,36),
+        icon_anchor=(0,0),
+        html='<div style="font-size: 16pt; color: black">Yearly sales in the various states in {}</div>'.format(i),
+        )
+    ).add_to(m)
     heats = regions.Sales
     fig, ax = plt.subplots(1, figsize=(20, 9))
     for r,o,s,p,la,lo in zip(regions.index,regions['Orders'],regions['Sales'],regions['Profit'],regions['latitude'],regions['longitude']):
@@ -229,3 +237,34 @@ for i in yr:
         myMap = folium.Marker(location=[la, lo],icon=folium.Icon(icon=ic,color=c), popup="<stong>{}</stong><p>Sales:{}</p><p>Orders:{}</p><p>{}:{}</p>".format(r,s,int(o),market,p),tooltip=tooltip)
         myMap.add_to(m)
     yearset[i] = m
+longitude = []
+latitude = []
+OAregions = dels.groupby(['State']).apply(regiongrouping)
+for j in (OAregions.index):
+    if j in d.keys():
+        longitude.append(d[j]['longitude'])
+        latitude.append(d[j]['latitude'])
+OAregions['latitude'] = latitude
+OAregions['longitude'] = longitude
+tooltip = "Click Here For More Info"
+mlat = OAregions['latitude'].mean()
+mlong = OAregions['longitude'].mean()
+OAm = folium.Map(location=[mlat, mlong], zoom_start=5)
+folium.map.Marker(
+[mlat, mlong],
+icon=folium.DivIcon(
+    icon_size=(250,36),
+    icon_anchor=(0,0),
+    html='<div style="font-size: 16pt; color: black">Overall sales in the various states</div>',
+    )
+).add_to(OAm)
+for r,o,s,p,la,lo in zip(OAregions.index,OAregions['Orders'],OAregions['Sales'],OAregions['Profit'],OAregions['latitude'],OAregions['longitude']):
+    c = "green" if p > 0 else "red"
+    market = "Profit" if p > 0 else "Loss"
+    ic ="thumbs-up" if p > 0 else "thumbs-down"
+    myMap = folium.Marker(location=[la, lo],icon=folium.Icon(icon=ic,color=c), popup="<stong>{}</stong><p>Sales:{}</p><p>Orders:{}</p><p>{}:{}</p>".format(r,s,int(o),market,p),tooltip=tooltip)
+    myMap.add_to(OAm)
+yearset['Overall'] = OAm
+for n in yr:
+    yearset[n].save("states{}.HTML".format(n))
+yearset['Overall'].save("Overall_state.HTML")
