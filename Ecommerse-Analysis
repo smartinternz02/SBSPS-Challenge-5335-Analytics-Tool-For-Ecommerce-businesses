@@ -28,7 +28,7 @@ fig,ax = plt.subplots(figsize=(16, 9))
 plt.barh(dtlist,mt)
 for i,j in zip(mt,dtlist):
     plt.text(i,j,str(i))
-plt.title('Observation Shipping Classes', fontdict={'size':36})
+plt.title('Shipping Classes Observation', fontdict={'size':36})
 plt.show()
 
 # Product type sales in percentage :1
@@ -102,6 +102,7 @@ dt = dt.sort_values(['Profit'], ascending=False)
 yr = sorted(list(dt['year'].unique()))
 categories = np.unique(dt['Category'])
 colorss = [plt.cm.tab10(i/float(len(categories)-1)) for i in range(len(categories))]
+
 for i in yr:
     #Profitable Product-types 
     
@@ -133,7 +134,7 @@ for i in yr:
     plt.figure(figsize=(20,16), dpi= 80)
     sns.violinplot(x='Sub-Category',y='Quantity',data=midwest_encircle_data,scale='width', inner='quartile')
     plt.xticks(fontsize=12); plt.yticks(fontsize=12)
-    plt.title("Frequency distribution of quantity ordered in {}".format(i), fontsize=36)
+    plt.title("Frequency distribution of quantity in {}".format(i), fontsize=36)
     plt.show()
     
 #     Monthly profit observations :4
@@ -151,8 +152,26 @@ for i in yr:
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
     plt.legend(fontsize=20)
-    plt.title("Monthly Profit Observations in {}".format(i), fontsize=36)
+    plt.title("Yearly Profit Observations in {}".format(i), fontsize=36)
     plt.show()
+    
+#overall profit in last years
+my = dt.groupby(['month']).apply(newprofit)
+my = my.sort_values('month',ascending=True)
+fig , ax = plt.subplots(figsize=(20,16), dpi= 80)
+sns.set_style("white")
+sns.regplot(x="Month", y="ovl_Profit_Precentage",data=my,fit_reg=True,logx=True,ax = ax,line_kws=dict(label='Predicted line',color='red'),scatter_kws=dict(s=100, linewidths=.7, edgecolors='black'))
+plt.plot(my['Month'], my['ovl_Profit_Precentage'], '-o', color='purple',linewidth=1.5,label='actual Value')
+for x, y, tex in zip(my['Month'], my['ovl_Profit_Precentage'], my['ovl_Profit_Precentage']):
+    t = plt.text(x, y, round(tex, 2), horizontalalignment='right' if y < 0 else 'left', 
+             verticalalignment='top', fontdict={'color':'red' if y < 0 else 'green', 'size':20})
+plt.grid(linestyle='--', alpha=0.4)
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.legend(fontsize=20)
+plt.title("Overall Profit Observations", fontsize=36)
+plt.show()
+
     
 #overall profit in last years
 my = dt.groupby(['month']).apply(newprofit)
