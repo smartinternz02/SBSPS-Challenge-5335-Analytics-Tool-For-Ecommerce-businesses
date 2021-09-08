@@ -1,0 +1,68 @@
+package Services;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class ServicesDefination {
+    static Map<String,Map<String,String>> ServiceTypeList = new HashMap<>();
+    public String Description;
+    public ServiceType ServiceType;
+    public String ServiceDomin;
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public String getServiceDomin() {
+        return ServiceDomin;
+    }
+
+    public ServiceType getServiceType() {
+        return ServiceType;
+    }
+
+    public void setServiceDomin(String serviceDomin) {
+        System.out.println(serviceDomin);
+        ServiceDomin = serviceDomin;
+    }
+
+    public void setDescription(String description) {
+        Description = description;
+    }
+
+    public void setServiceType(String AgencyName,String ServiceName,String ServiceProviderName) {
+        ServiceType = new ServiceType(AgencyName,ServiceName,ServiceProviderName);
+    }
+
+
+    public Map<String, Map<String, String>> getServiceTypeList() {
+        Map<String, String> ServiceData = new HashMap<>();
+        ServiceData.put("Agency Name :", ServiceType.AgencyName);
+        ServiceData.put("Service Person Name :", ServiceType.ServiceProviderName);
+        ServiceTypeList.put(ServiceType.ServiceName,ServiceData);
+        return ServiceTypeList;
+    }
+}
+class ServiceType{
+    public String ServiceName;
+    public String AgencyName;
+    public String ServiceProviderName;
+    public ServiceType(String ServiceName,String AgencyName,String ServiceProviderName){
+        this.ServiceName = ServiceName;
+        this.AgencyName = AgencyName;
+        this.ServiceProviderName = ServiceProviderName;
+    }
+
+    public void setAgencyName(String agencyName) {
+        AgencyName = agencyName;
+    }
+
+    public void setServiceName(String serviceName) {
+        ServiceName = serviceName;
+    }
+
+    public void setServiceProviderName(String serviceProviderName) {
+        ServiceProviderName = serviceProviderName;
+    }
+}
